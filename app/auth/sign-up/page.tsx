@@ -1,4 +1,4 @@
-import { SignUpForm } from "./_components/signUpForm";
+import { SignUpForm } from "../../../components/auth/signUpForm";
 
 interface SignUpPageProps { }
 

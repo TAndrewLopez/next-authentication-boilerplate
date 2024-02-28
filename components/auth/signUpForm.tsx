@@ -13,11 +13,13 @@ import {
     IoKeyOutline,
 } from "react-icons/io5";
 import { z } from "zod";
+import { toast } from "sonner";
 
 import { PasswordStrength } from "./passwordStrength";
 import { Button, Input } from "@/components/ui";
 import { RegisterSchema } from "@/schemas";
 import { cn } from "@/lib/utils";
+import { registerUser } from "@/lib/actions/authentication";
 
 interface SignUpFormProps { }
 
@@ -43,7 +45,20 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
     const onSubmit: SubmitHandler<z.infer<typeof RegisterSchema>> = async (
         values
     ) => {
-        console.log(values);
+        const validatedFields = RegisterSchema.safeParse(values);
+        if (!validatedFields.success) throw new Error("Invalid Fields");
+        const { confirmPassword, ...user } = validatedFields.data;
+        try {
+            setIsLoading(true);
+            const result = await registerUser(user);
+            toast.success("Sign up successful.");
+        } catch (error) {
+            toast.error("Something went wrong. Please try again.");
+            console.error(error);
+        } finally {
+            setIsLoading(false);
+            console.log(values);
+        }
     };
 
     useEffect(() => {

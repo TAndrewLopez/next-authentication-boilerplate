@@ -7,5 +7,6 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
   ...props
 }) => {
-  return <NextThemeProvider {...props}>{children}</NextThemeProvider>;
+  return <NextThemeProvider {...props}>{children}</NextThemeProvider>
+
 };
