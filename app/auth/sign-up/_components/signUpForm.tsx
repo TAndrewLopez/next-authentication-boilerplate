@@ -1,7 +1,8 @@
 "use client";
 
+import { passwordStrength } from "check-password-strength";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { SubmitHandler, useForm } from "react-hook-form";
 import { FaGithub, FaUser } from "react-icons/fa";
 import { ImSpinner10 } from "react-icons/im";
@@ -13,6 +14,7 @@ import {
 } from "react-icons/io5";
 import { z } from "zod";
 
+import { PasswordStrength } from "./passwordStrength";
 import { Button, Input } from "@/components/ui";
 import { RegisterSchema } from "@/schemas";
 import { cn } from "@/lib/utils";
@@ -24,11 +26,15 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
     const [showConfirmPassword, setShowConfirmPassword] =
         useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(false);
+    const [passStrength, setPassStrength] = useState<number>(0);
+    const [confirmPassStrength, setConfirmPassStrength] = useState<number>(0);
 
     const {
         register,
         handleSubmit,
         reset,
+        watch,
+        getValues,
         formState: { errors },
     } = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
@@ -39,6 +45,11 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
     ) => {
         console.log(values);
     };
+
+    useEffect(() => {
+        setPassStrength(passwordStrength(watch().password).id);
+        setConfirmPassStrength(passwordStrength(watch().confirmPassword).id);
+    }, [watch().password, watch().confirmPassword]);
 
     return (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-3">
@@ -65,7 +76,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
                         <IoKeyOutline className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4" />
                     </label>
                     <Input
-                        className={cn("pl-8", !!errors.password?.message && "border-red-500")}
+                        className={cn(
+                            "pl-8",
+                            !!errors.password?.message && "border-red-500"
+                        )}
                         disabled={isLoading}
                         id="password"
                         type={showPassword ? "text" : "password"}
@@ -83,6 +97,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
                             onClick={() => setShowPassword((prev) => !prev)}
                         />
                     )}
+                    <PasswordStrength
+                        passLength={getValues("password")?.length}
+                        strength={passStrength}
+                    />
                 </div>
                 <p className="text-sm text-red-500">{errors.password?.message}</p>
             </div>
@@ -114,8 +132,14 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
                             onClick={() => setShowConfirmPassword((prev) => !prev)}
                         />
                     )}
+                    <PasswordStrength
+                        passLength={getValues("confirmPassword")?.length}
+                        strength={confirmPassStrength}
+                    />
                 </div>
-                <p className="text-sm text-red-500">{errors.confirmPassword?.message}</p>
+                <p className="text-sm text-red-500">
+                    {errors.confirmPassword?.message}
+                </p>
             </div>
 
             <Button
