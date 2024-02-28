@@ -1,9 +1,14 @@
 "use client";
 
 import { useState, type FormEvent } from "react";
-import { FaLock, FaUser } from "react-icons/fa";
+import { FaUser } from "react-icons/fa";
 import { ImSpinner10 } from "react-icons/im";
-import { IoEyeOffSharp, IoEyeSharp } from "react-icons/io5";
+import {
+    IoEyeOffSharp,
+    IoEyeSharp,
+    IoKey,
+    IoKeyOutline,
+} from "react-icons/io5";
 
 import { Button, Input } from "@/components/ui";
 
@@ -17,6 +22,8 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
     onSubmit,
 }) => {
     const [showPassword, setShowPassword] = useState(false);
+    const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+
     const toggleShowPassword = () => {
         setShowPassword((prev) => !prev);
     };
@@ -24,7 +31,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
     return (
         <form onSubmit={(e) => onSubmit(e)} className="space-y-3">
             <div className="relative">
-                <label htmlFor="email">
+                <label htmlFor="email" aria-label="email">
                     <FaUser className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4" />
                 </label>
                 <Input
@@ -36,25 +43,48 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({
                 />
             </div>
             <div className="relative">
-                <label htmlFor="password">
-                    <FaLock className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4" />
+                <label htmlFor="password" aria-label="password">
+                    <IoKeyOutline className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4" />
                 </label>
                 <Input
                     className="pl-8"
                     disabled={isLoading}
                     id="password"
                     type={showPassword ? "text" : "password"}
-                    placeholder="password"
+                    placeholder="Password"
                 />
                 {showPassword ? (
                     <IoEyeSharp
                         className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 cursor-pointer"
-                        onClick={toggleShowPassword}
+                        onClick={() => setShowPassword((prev) => !prev)}
                     />
                 ) : (
                     <IoEyeOffSharp
                         className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 cursor-pointer"
-                        onClick={toggleShowPassword}
+                        onClick={() => setShowPassword((prev) => !prev)}
+                    />
+                )}
+            </div>
+            <div className="relative">
+                <label htmlFor="confirmPassword" aria-label="confirm password">
+                    <IoKey className="absolute left-2 top-1/2 -translate-y-1/2 w-4 h-4" />
+                </label>
+                <Input
+                    className="pl-8"
+                    disabled={isLoading}
+                    id="confirmPassword"
+                    type={showConfirmPassword ? "text" : "password"}
+                    placeholder="Confirm Password"
+                />
+                {showConfirmPassword ? (
+                    <IoEyeSharp
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 cursor-pointer"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
+                    />
+                ) : (
+                    <IoEyeOffSharp
+                        className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 cursor-pointer"
+                        onClick={() => setShowConfirmPassword((prev) => !prev)}
                     />
                 )}
             </div>

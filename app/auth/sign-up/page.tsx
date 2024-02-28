@@ -14,18 +14,32 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ }) => {
 
     const handleFormSubmit = (e: FormEvent) => {
         e.preventDefault();
-        setIsLoading(true);
 
         try {
+            setIsLoading(true);
             const target = e.target as typeof e.target & {
                 email: { value: string };
                 password: { value: string };
+                confirmPassword: { value: string };
             };
 
-            console.log(target.email.value, target.password.value)
+            if (
+                !target.email.value ||
+                !target.password.value ||
+                !target.confirmPassword.value
+            ) {
+                return setIsLoading(false);
+            }
+
+            console.log({
+                email: target.email.value,
+                password: target.password.value,
+                confirmPassword: target.confirmPassword.value,
+            });
         } catch (error) {
             console.log("error occurred");
         } finally {
+            // TIMEOUT TO DEMONSTRATE LOADING STATE
             setTimeout(() => {
                 setIsLoading(false);
             }, 3000);
@@ -60,7 +74,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ }) => {
                     GitHub
                 </Button>
                 <p className="max-w-sm text-muted-foreground text-center">
-                    By clicking continue, you agree to our Terms of Service and Privacy
+                    By submitting your information, you agree to our Terms of Service and Privacy
                     Policy.
                 </p>
             </div>
