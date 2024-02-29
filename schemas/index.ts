@@ -1,9 +1,17 @@
 import validator from "validator";
 import { z } from "zod";
 
+export const LoginSchema = z.object({
+    email: z.string().email("A valid email address is required."),
+    password: z
+        .string({
+            required_error: "Please enter your password."
+        })
+});
+
 export const RegisterSchema = z
     .object({
-        email: z.string().email("Email is required."),
+        email: z.string().email("A valid email address is required."),
         password: z
             .string()
             .min(6, "Password must be 6 characters minimum.")
@@ -15,11 +23,11 @@ export const RegisterSchema = z
     })
     .refine((data) => data.password === data.confirmPassword, {
         message: "Passwords don't match.",
-        path: ["confirmPassword"]
+        path: ["confirmPassword"],
     });
 
 export const UpdateSchema = z.object({
-    email: z.string().email("Email is required."),
+    email: z.string().email("A valid email address is required."),
     password: z
         .string()
         .min(6, "Password must be 6 characters minimum.")

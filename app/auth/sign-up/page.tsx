@@ -1,4 +1,4 @@
-import { SignUpForm } from "../../../components/auth/signUpForm";
+import { SignUpForm } from "@/components/auth/signUpForm";
 
 interface SignUpPageProps { }
 
@@ -6,7 +6,7 @@ const SignUpPage: React.FC<SignUpPageProps> = ({ }) => {
     return (
         <div className="h-full flex items-center justify-center">
             <div className="flex flex-col gap-y-6">
-                <div className="text-center space-y-3">
+                <div className="text-center space-y-2">
                     <p className="text-2xl font-semibold">Create an account</p>
                     <p className="text-muted-foreground text-sm">
                         Enter your email below to create your account

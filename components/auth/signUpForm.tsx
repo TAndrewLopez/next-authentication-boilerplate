@@ -27,7 +27,6 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
     const [showPassword, setShowPassword] = useState<boolean>(false);
     const [showConfirmPassword, setShowConfirmPassword] =
         useState<boolean>(false);
-    const [isLoading, setIsLoading] = useState<boolean>(false);
     const [passStrength, setPassStrength] = useState<number>(0);
     const [confirmPassStrength, setConfirmPassStrength] = useState<number>(0);
 
@@ -37,7 +36,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
         reset,
         watch,
         getValues,
-        formState: { errors },
+        formState: { errors, isSubmitting },
     } = useForm<z.infer<typeof RegisterSchema>>({
         resolver: zodResolver(RegisterSchema),
     });
@@ -49,21 +48,18 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
         if (!validatedFields.success) throw new Error("Invalid Fields");
         const { confirmPassword, ...user } = validatedFields.data;
         try {
-            setIsLoading(true);
             const result = await registerUser(user);
             toast.success("Sign up successful.");
         } catch (error) {
             toast.error("Something went wrong. Please try again.");
             console.error(error);
-        } finally {
-            setIsLoading(false);
-            console.log(values);
         }
     };
 
     useEffect(() => {
         setPassStrength(passwordStrength(watch().password).id);
         setConfirmPassStrength(passwordStrength(watch().confirmPassword).id);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [watch().password, watch().confirmPassword]);
 
     return (
@@ -75,7 +71,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
                     </label>
                     <Input
                         className={cn("pl-8", !!errors.email?.message && "border-red-500")}
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                         id="email"
                         type="email"
                         placeholder="name@email.com"
@@ -95,7 +91,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
                             "pl-8",
                             !!errors.password?.message && "border-red-500"
                         )}
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                         id="password"
                         type={showPassword ? "text" : "password"}
                         placeholder="Password"
@@ -130,7 +126,7 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
                             "pl-8",
                             !!errors.confirmPassword?.message && "border-red-500"
                         )}
-                        disabled={isLoading}
+                        disabled={isSubmitting}
                         id="confirmPassword"
                         type={showConfirmPassword ? "text" : "password"}
                         placeholder="Confirm Password"
@@ -158,10 +154,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
             </div>
 
             <Button
-                disabled={isLoading}
+                disabled={isSubmitting}
                 type="submit"
                 className="w-full flex gap-x-2">
-                {isLoading && <ImSpinner10 className="spin w-4 h-4 animate-spin" />}
+                {isSubmitting && <ImSpinner10 className="spin w-4 h-4 animate-spin" />}
                 Sign up with Email
             </Button>
             <div className="flex items-center">
@@ -173,10 +169,10 @@ export const SignUpForm: React.FC<SignUpFormProps> = ({ }) => {
             </div>
             <Button
                 type="button"
-                disabled={isLoading}
+                disabled={isSubmitting}
                 className="flex gap-x-2 w-full"
                 variant="outline">
-                {isLoading ? (
+                {isSubmitting ? (
                     <ImSpinner10 className="spin w-4 h-4 animate-spin" />
                 ) : (
                     <FaGithub className="w-4 h-4" />
